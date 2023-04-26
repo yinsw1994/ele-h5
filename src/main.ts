@@ -1,6 +1,8 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 
+import { Search, Icon } from 'vant'
+
 import App from './App.vue'
 import router from './router'
 
@@ -15,6 +17,9 @@ app.component('KeepAlive', KeepAlive)
 
 app.use(createPinia())
 app.use(router)
+
+app.use(Search)
+app.use(Icon)
 
 const rootValue = 16
 const rootWidth = 390

@@ -1,29 +1,22 @@
 <template>
-  <div>home</div>
-  <div>{{ testData }}</div>
+  <div class="home-page">
+    <TheTop :recomments="recomments" />
+  </div>
 </template>
 
-<script setup>
-import { fetchTest } from '@/api/test'
-import { ref, onMounted, onUnmounted, onActivated, onDeactivated } from 'vue'
+<script setup lang="ts">
+import TheTop from './components/TheTop.vue'
 
-let testData = ref('0') // 用于存储接口返回的数据
-
-onMounted(() => {
-  fetchTest().then((res) => {
-    console.log('onMounted==>', res)
-    testData.value = res.desc
-  })
-})
-onActivated(() => {
-  console.log('onActive ==> home active')
-})
-
-onDeactivated(() => {
-  console.log('onDeactive ==> home deactive')
-})
-
-onUnmounted(() => {
-  console.log('home unmounted')
-})
+const recomments = [
+  {
+    value: 1,
+    label: '牛腩'
+  },
+  {
+    value: 2,
+    label: '色拉'
+  }
+]
 </script>
+
+<style></style>
