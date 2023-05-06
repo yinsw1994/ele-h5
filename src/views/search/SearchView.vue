@@ -12,7 +12,7 @@
     <div v-if="!searchValue" class="search-view__history">
       <div class="label">历史搜索</div>
       <TransitionGroup>
-        <div class="history-tag" @click="onSearch(v)" v-for="v in historyTags" :key="v">
+        <div class="history-tag" @click="onTagClick(v)" v-for="v in historyTags" :key="v">
           {{ v }}
         </div>
         <div class="history-tag" key="arrow" @click="toggleHistoryTag">
@@ -39,9 +39,11 @@
 import type { ISearchResult } from '@/types'
 import OpSearch from '@/components/OpSearch.vue'
 import { fetchSearchData } from '@/api/search'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 import { useToggle } from '@/use/useToggle'
+import { useDebounce } from '@/use/useDebounce'
+
 interface IEmits {
   (e: 'cancel'): void
 }
@@ -53,13 +55,6 @@ const searchResult = ref([] as ISearchResult[])
 const [INIT, DONE, DOING] = [-1, 0, 1]
 const searchState = ref(INIT)
 const onSearch = async (value?: string | number) => {
-  console.log('search', value)
-  if (!value) {
-    searchResult.value = []
-    return
-  } else {
-    searchValue.value = value as string
-  }
   try {
     searchState.value = DOING
     const { list } = await fetchSearchData(value as string)
@@ -69,6 +64,20 @@ const onSearch = async (value?: string | number) => {
     searchState.value = DONE
   }
 }
+
+const onTagClick = (v) => {
+  searchValue.value = v
+  onSearch(v)
+}
+
+// watch(searchValue, useDebounce((nv) => {
+//   if (!nv) {
+//     searchResult.value = []
+
+//     return
+//   }
+//   onSearch(nv as string)
+// }, 1000))
 
 const HISTORY_TAGS = [
   '比萨',
@@ -87,6 +96,16 @@ const [isHistoryTagShown, toggleHistoryTag] = useToggle(false)
 const historyTags = computed(() =>
   isHistoryTagShown.value ? HISTORY_TAGS : HISTORY_TAGS.slice(0, 5)
 )
+
+const debounceValue = useDebounce(searchValue, 1000)
+watch(debounceValue, (nv) => {
+  if (!nv) {
+    searchResult.value = []
+
+    return
+  }
+  onSearch(nv as string)
+})
 </script>
 
 <style lang="scss">
