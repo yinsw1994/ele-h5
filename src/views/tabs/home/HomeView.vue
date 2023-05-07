@@ -4,15 +4,23 @@
       <SearchView v-if="isSearchViewShown" @cancel="toggleSearchView"></SearchView>
     </Transition>
     <TheTop :recomments="recomments" @searchClick="toggleSearchView" />
+    <OpLoadingView :loading="pending" type="skeleton">
+      <TheTransformer :data="data.transformer" />
+      <ScrollBar :data="data.scrollBarInfoList" />
+    </OpLoadingView>
   </div>
 </template>
 
 <script setup lang="ts">
+import type { IBanner, ICountdown, IHomeInfo } from '@/types'
 import TheTop from './components/TheTop.vue'
-
+import TheTransformer from './components/TheTransformer.vue'
+import ScrollBar from '@/components/ScrollBar.vue'
 import { useToggle } from '@/use/useToggle'
-
 import SearchView from '@/views/search/SearchView.vue'
+import { useAsync } from '@/use/useAsync'
+import { fetchHomePageData } from '@/api/home'
+import OpLoadingView from '@/components/OpLoadingView.vue'
 
 const recomments = [
   {
@@ -27,6 +35,16 @@ const recomments = [
 
 const [isSearchViewShown, toggleSearchView] = useToggle(false)
 // console.log(`output->isSearchViewShown`, isSearchViewShown.value)
+
+const { data, pending } = useAsync(fetchHomePageData, {
+  banner: [],
+  transformer: [],
+  scrollBarInfoList: [],
+  countdown: {} as ICountdown,
+  activities: [],
+  searchRecomments: []
+} as IHomeInfo)
+console.log('🚀 ~ file: HomeView.vue:33 ~ data:', data)
 </script>
 
 <style lang="scss" scoped>

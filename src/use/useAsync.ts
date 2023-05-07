@@ -1,4 +1,5 @@
-import { ref, UnwrapRef } from 'vue'
+import { ref } from 'vue'
+import type { UnwrapRef } from 'vue'
 
 export function useAsync<T>(asyncFn: () => Promise<T>, initValue: T, immediate = true) {
   const pending = ref(false)
