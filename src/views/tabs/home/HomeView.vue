@@ -5,6 +5,9 @@
     </Transition>
     <TheTop :recomments="recomments" @searchClick="toggleSearchView" />
     <OpLoadingView :loading="pending" type="skeleton">
+      <div class="home-page__banner">
+        <img v-for="v in data.banner" :key="v.imgUrl" :src="v.imgUrl" />
+      </div>
       <TheTransformer :data="data.transformer" />
       <ScrollBar :data="data.scrollBarInfoList" />
       <div class="home-page__activity">
